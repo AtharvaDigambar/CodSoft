@@ -1,1 +1,189 @@
+2.Model Training and Versioning using a Simple Dataset: In this assignment, you will work with a small dataset (e.g., the Iris dataset) to build and 
+manage versions of a basic machine learning model.
 
+i.	Data Preparation:
+import joblib
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+# Split into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+ii.	Model Training:
+# Logistic Regression (initial model)
+log_reg_model = LogisticRegression(max_iter=200, C=1.0)
+log_reg_model.fit(X_train, y_train)
+# Decision Tree (initial model)
+dt_model = DecisionTreeClassifier(max_depth=4, criterion='entropy', random_state=42)
+dt_model.fit(X_train, y_train)
+
+iii.	Hyperparameter Tuning:
+# Hyperparameter tuning for Logistic Regression
+log_reg_accuracies = {}
+for c in [0.01, 0.1, 1.0, 10.0, 100.0]:
+    model = LogisticRegression(max_iter=200, C=c)
+    model.fit(X_train, y_train)
+    acc = accuracy_score(y_test, model.predict(X_test))
+    log_reg_accuracies[c] = acc
+
+print("\nLogistic Regression Hyperparameter Tuning Results:")
+for c_val, acc in log_reg_accuracies.items():
+    print(f"C = {c_val}: Accuracy = {acc}")
+# Hyperparameter tuning for Decision Tree
+dt_accuracies = {}
+for depth in [2, 3, 4, 5, None]:  # None = no depth limit
+    model = DecisionTreeClassifier(max_depth=depth, criterion='entropy', random_state=42)
+    model.fit(X_train, y_train)
+    acc = accuracy_score(y_test, model.predict(X_test))
+    dt_accuracies[depth] = acc
+print("\nDecision Tree Hyperparameter Tuning Results:")
+for depth_val, acc in dt_accuracies.items():
+    print(f"max_depth = {depth_val}: Accuracy = {acc}")
+
+iv.	Record the results for comparison.
+# Predictions and accuracy for initial Logistic Regression
+y_pred_v1 = log_reg_model.predict(X_test)
+accuracy_v1 = accuracy_score(y_test, y_pred_v1)
+print(f"\nModel v1 (Logistic Regression) Accuracy: {accuracy_v1}")
+# Predictions and accuracy for initial Decision Tree
+y_pred_v2 = dt_model.predict(X_test)
+accuracy_v2 = accuracy_score(y_test, y_pred_v2)
+print(f"Model v2 (Decision Tree) Accuracy: {accuracy_v2}")
+
+v.	Model Versioning: 
+# Save trained models
+joblib.dump(log_reg_model, 'model_v1.pkl')
+joblib.dump(dt_model, 'model_v2.pkl')
+# Load models for demonstration
+model_v1_loaded = joblib.load('model_v1.pkl')
+model_v2_loaded = joblib.load('model_v2.pkl')
+# Re-evaluate loaded models
+y_pred_v1_loaded = model_v1_loaded.predict(X_test)
+accuracy_v1_loaded = accuracy_score(y_test, y_pred_v1_loaded)
+print(f"Loaded Model v1 (Logistic Regression) Accuracy: {accuracy_v1_loaded}")
+y_pred_v2_loaded = model_v2_loaded.predict(X_test)
+accuracy_v2_loaded = accuracy_score(y_test, y_pred_v2_loaded)
+print(f"Loaded Model v2 (Decision Tree) Accuracy: {accuracy_v2_loaded}")
+
+3.Saving and Reusing a Machine Learning Model: In this assignment, you will train a machine learning model using a simple dataset and learn 
+how to save and reuse the model without retraining.
+
+i.	Train a Model:
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+# Load dataset
+data = load_breast_cancer()
+X = data.data
+y = data.target
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+# Evaluate
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy:.2f}")
+
+ii.	Save the Model:
+import joblib
+# Save model to file
+joblib.dump(model, 'breast_cancer_model.pkl')
+print("Model saved as 'breast_cancer_model.pkl'")
+
+iii.	Reuse the Model:
+# Load saved model
+loaded_model = joblib.load('breast_cancer_model.pkl')
+# Predict on a new sample
+sample = [X[0]]  # Using the first instance from the dataset
+prediction = loaded_model.predict(sample)
+# Output
+print(f"Predicted class: {data.target_names[prediction[0]]}")
+
+4.	Creating a Reproducible ML Pipeline using Jupyter and Virtual Environment:
+iii. to vi.
+
+import pandas as pd
+import seaborn as sns
+df = sns.load_dataset('titanic')
+df.head()
+
+# Drop missing and irrelevant columns
+df = df[['survived', 'pclass', 'sex', 'age']].dropna()
+# Convert categorical to numeric
+df['sex'] = df['sex'].map({'male': 0, 'female': 1})
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+# Features and labels
+X = df[['pclass', 'sex', 'age']]
+y = df['survived']
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train the model
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+# Predictions and Accuracy
+predictions = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, predictions))
+
+vii.	Save the notebook and environment dependencies (requirements.txt).
+pip freeze > requirements.txt
+
+5.	Exploratory Data Analysis (EDA) and Report Generation
+
+i.	Choose a public dataset (e.g., from Kaggle or UCI Repository).
+import seaborn as sns
+import pandas as pd
+# Load the dataset
+df = sns.load_dataset('titanic')
+df.head()
+
+ii.	Perform data cleaning, null value handling, and visualization using seaborn or matplotlib.
+# Check for null values
+df.isnull().sum()
+# Handle missing values (example: fill or drop based on relevance)
+df['age'].fillna(df['age'].median(), inplace=True)
+df['embarked'].fillna(df['embarked'].mode()[0], inplace=True)
+df.drop(columns=['deck'], inplace=True)  # too many nulls
+
+iii.Vistualizations
+import matplotlib.pyplot as plt
+sns.histplot(df['age'], kde=True)
+plt.title('Distribution of Age')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.show()
+
+plt.figure(figsize=(8,6))
+sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap')
+plt.show()
+
+sns.boxplot(x=df['fare'])
+plt.title('Boxplot of Fare')
+plt.show()
+
+iv.	Export the EDA results as a PDF report (use nbconvert, matplotlib, or pandas_profiling).
+pip install ydata-profiling
+
+from ydata_profiling import ProfileReport
+profile = ProfileReport(df, title='Titanic Dataset EDA Report', explorative=True)
+profile.to_file("titanic_eda_report.html")
+
+v.	Commit the EDA notebook and report to your GitHub repository.
+git init
+git add .
+git commit -m "Added EDA notebook and report for Titanic dataset"
+git remote add origin https://github.com/yourusername/your-repo-name.git
+git push -u origin master

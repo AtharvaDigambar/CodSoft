@@ -152,7 +152,7 @@ from statsmodels.datasets import get_rdataset
 # 1. Load built-in temperature dataset
 url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv"
 df = pd.read_csv(url, parse_dates=['Date'])
-df = df[['Temp']]
+df = df[['Temp']] #Keeps only the temperature column and removes the date column
 print(df)
 
 # 2. Visualize

@@ -1,0 +1,206 @@
+Digit (Line 2 to 49)
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D,MaxPooling2D,Dense,Dropout,Flatten
+from tensorflow.keras.utils import to_categorical
+
+(x_train,y_train),(x_test,y_test) = tf.keras.datasets.mnist.load_data()
+
+x_train = x_train.reshape(-1,28,28,1)/255.0
+x_test = x_test.reshape(-1,28,28,1)/255.0
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+
+model = Sequential([
+    Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),
+    MaxPooling2D((2,2)),
+    Flatten(),
+    Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])
+
+history = model.fit(x_train,y_train,epochs=10,verbose=1)
+
+test_loss,test_accuracy = model.evaluate(x_test,y_test,verbose=0)
+print(f'test accuracy:{test_accuracy:.4f}')
+
+import matplotlib.pyplot as plt
+
+sample_image=x_test[0]
+plt.imshow(sample_image.reshape(28,28),cmap='gray')
+plt.title('Sample Image')
+plt.show()
+
+import numpy as np
+prediction = model.predict(sample_image.reshape(1, 28, 28, 1))
+predicted_label = np.argmax(prediction)
+actual_label = np.argmax(y_test[0])
+
+print(f"Actual Label: {actual_label}")
+print(f"Predicted Label: {predicted_label}")
+
+import matplotlib.pyplot as plt
+
+
+
+# Assuming `history` is your training history object
+plt.plot(history.history['loss'], label='Training Loss')
+
+Sentiment (Line 51 to 140)
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Embedding, GlobalAveragePooling1D
+from tensorflow.keras.datasets import imdb
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+# Load and Preprocess the IMDB dataset
+max_words = 10000  # Consider only the top 10,000 most frequent words
+max_len = 200  # Limit review length to 200 words
+
+# Load the dataset (training and testing splits)
+(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=max_words)
+
+# Pad sequences to ensure uniform input size (200 words per review)
+X_train = pad_sequences(X_train, maxlen=max_len)
+X_test = pad_sequences(X_test, maxlen=max_len)
+
+# Step 2: Build the Deep Neural Network Model
+model = Sequential([
+    Embedding(input_dim=max_words, output_dim=128, input_length=max_len),  # Embedding layer for word representation
+    GlobalAveragePooling1D(),  # Global average pooling layer to reduce dimensions
+    Dense(64, activation='relu'),  # Fully connected layer
+    Dense(1, activation='sigmoid')  # Output layer (binary classification)
+])
+
+# Step 3: Compile the model
+model.compile(optimizer='adam',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])
+
+# Step 4: Train the model
+print("Training the model...")
+history = model.fit(X_train, y_train, epochs=10, batch_size=64, validation_data=(X_test, y_test))
+
+# Step 5: Evaluate the model
+print("\nEvaluating the model...")
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print(f"\nTest Accuracy: {test_accuracy * 100:.2f}%")
+
+# Step 6: Decode and Predict Sentiments
+# Get the word index from the IMDB dataset
+word_index = imdb.get_word_index()
+reverse_word_index = {value: key for key, value in word_index.items()}  # Reverse mapping
+
+def decode_review(encoded_review):
+    """Convert an encoded review back into text."""
+    return " ".join([reverse_word_index.get(i - 3, "?") for i in encoded_review])
+
+print("\nPredicting sentiments for sample reviews...")
+# Predict the sentiment of the first 5 reviews in the test set
+predictions = model.predict(X_test[:5])
+
+# Display the predictions along with the decoded reviews and actual labels
+for i, pred in enumerate(predictions):
+    decoded_review = decode_review(X_test[i])
+    sentiment = "Positive" if pred >= 0.5 else "Negative"
+    actual_sentiment = "Positive" if y_test[i] == 1 else "Negative"
+    print(f"\nReview {i+1}:")
+    print(f"Text: {decoded_review}")
+    print(f"Predicted Sentiment: {sentiment}, Actual Label: {actual_sentiment}")
+
+import matplotlib.pyplot as plt
+
+
+# Plot Accuracy
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Training Accuracy', marker='o')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy', marker='o')
+plt.title('Model Accuracy Over Epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+# Plot Loss
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Training Loss', marker='o')
+plt.plot(history.history['val_loss'], label='Validation Loss', marker='o')
+plt.title('Model Loss Over Epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
+
+model.summary()
+
+LSTM GRU Time series (Line 142 to 206)
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from statsmodels.datasets import get_rdataset
+
+# 1. Load built-in temperature dataset
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv"
+df = pd.read_csv(url, parse_dates=['Date'])
+df = df[['Temp']]
+print(df)
+
+# 2. Visualize
+df.plot(title="Daily Minimum Temperatures in Melbourne")
+plt.show()
+
+# 3. Normalize
+scaler = MinMaxScaler()
+scaled = scaler.fit_transform(df)
+
+# 4. Create sequences
+def create_sequences(data, seq_len):
+    X, y = [], []
+    for i in range(len(data) - seq_len):
+        X.append(data[i:i+seq_len])
+        y.append(data[i+seq_len])
+    return np.array(X), np.array(y)
+
+SEQ_LEN = 30
+X, y = create_sequences(scaled, SEQ_LEN)
+
+# 5. Train/Test split
+split = int(0.8 * len(X))
+X_train, y_train = X[:split], y[:split]
+X_test, y_test = X[split:], y[split:]
+
+# 6. Build LSTM Model
+model = Sequential([
+    LSTM(64, activation='relu', input_shape=(SEQ_LEN, 1)),
+    Dense(1)
+])
+model.compile(optimizer='adam', loss='mse')
+model.summary()
+
+# 7. Train
+model.fit(X_train, y_train, epochs=20, batch_size=32, validation_split=0.1)
+
+# 8. Predict
+y_pred = model.predict(X_test)
+y_pred_inv = scaler.inverse_transform(y_pred)
+y_test_inv = scaler.inverse_transform(y_test)
+
+# 9. Plot
+plt.figure(figsize=(10, 5))
+plt.plot(y_test_inv, label='Actual')
+plt.plot(y_pred_inv, label='Predicted')
+plt.title('LSTM Forecast of Daily Minimum Temperatures')
+plt.xlabel('Days')
+plt.ylabel('Temperature (°C)')
+plt.legend()
+plt.show()

@@ -67,3 +67,40 @@ This is the error the model makes on the validation data, which it hasn't seen d
 It shows how well the model is likely to perform on new, unseen data.
 A low validation loss means the model is generalizing well.
 
+MinMaxScaler()
+MinMaxScaler is a function from sklearn.preprocessing that scales (normalizes) your data to a fixed range, usually 0 to 1.
+
+append mean in Python
+append() is a method used to add an item to the end of a list.
+
+ LSTM?
+Long Short-Term Memory (LSTM) is a type of Recurrent Neural Network (RNN) architecture designed to effectively learn long-term dependencies in sequential data.
+The LSTM cell maintains a cell state (a kind of long-term memory) that runs through the entire sequence. This cell state is modified using gates — mathematical structures that decide what to remember, what to forget, and what to output.
+There are three primary gates in an LSTM units:
+1.Forget Gate
+Purpose: Decides what information should be removed from the cell state.
+2. Input Gate
+Purpose: Decides what new information will be stored in the cell state.
+3.  Output Gate
+Purpose: Decides what part of the memory to output (i.e., the next hidden state).
+
+What is GRU?
+GRU stands for Gated Recurrent Unit, introduced by Cho et al. in 2014.
+It’s a type of Recurrent Neural Network (RNN) designed to solve the vanishing gradient problem and handle long-term dependencies, just like LSTM — but with a simpler architecture and fewer parameters.
+
+GRU Working — Step-by-Step (Conceptual)
+1. Update Gate (zₜ)
+Decides how much of the past information to keep.
+If z is close to 1 → keep most of the old info.
+If z is close to 0 → replace it with the new input.
+
+2. Reset Gate (rₜ)
+Controls how much of the past information to forget.
+If r is close to 0 → forget most of the past.
+If r is close to 1 → keep it all.
+
+3. New Memory (h̃ₜ)
+Combines current input and (optionally) previous hidden state to generate a candidate hidden state (temporary memory).
+
+4. Final Hidden State (hₜ)
+Blends the old hidden state and new memory using the update gate.

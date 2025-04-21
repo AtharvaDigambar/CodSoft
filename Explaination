@@ -40,3 +40,30 @@ that sum to 1, where each probability represents the likelihood that the input b
 Adam
 The Adam optimizer is an adaptive learning rate optimization algorithm that adjusts the learning rate for each parameter individually based on its past gradients.
 
+Embedding Layer?
+The Embedding layer maps each word (represented as an integer index) into a dense vector of fixed size. 
+It creates a lookup table where each word index corresponds to a learnable vector of numbers.
+
+GlobalAveragePooling1D(),
+Global average pooling layer to reduce dimensions
+
+Training Accuracy
+This is the accuracy of your model on the training data.
+It tells you how well your model is fitting the data it was trained on.
+High training accuracy means the model has learned to predict the labels in the training dataset correctly.
+
+Validation Accuracy
+This is the accuracy on a separate set of data (called the validation set) that the model has not seen during training.
+It tells you how well the model generalizes to new, unseen data.
+It's a better indicator of real-world performance.
+
+Training Loss
+This is the error (or cost) the model makes on the training data.
+It measures how well the model fits the training data.
+The goal of training is to minimize this loss by adjusting the model's weights using an optimizer (like Adam or SGD).
+
+Validation Loss
+This is the error the model makes on the validation data, which it hasn't seen during training.
+It shows how well the model is likely to perform on new, unseen data.
+A low validation loss means the model is generalizing well.
+

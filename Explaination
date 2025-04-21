@@ -1,0 +1,34 @@
+Loss 
+In deep learning, model loss is a measure of how well or poorly your model is performing. It tells you how far off your model's predictions are from the actual (true) values.
+Think of it this way:
+The loss is a number that shows how wrong the model is.
+The lower the loss, the better the model is doing.
+The higher the loss, the worse the model is doin
+
+Conv2D
+Conv2D (2D Convolution) is a convolutional layer that applies filters (kernels) to a 2D input (like an image) to extract important features such as edges, textures, and shapes.
+It's typically used as the first layer in a CNN (Convolutional Neural Network).
+Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1))
+When you set 32 filters, the Conv2D layer will learn 32 different features from the input image. Each of these filters will produce a separate feature map, and the resulting output will have 32 channels.
+
+MaxPooling2D
+The MaxPooling2D layer performs a pooling operation by dividing the input into small non-overlapping rectangles (called windows or patches), and for each patch, 
+it takes the maximum value. This reduces the spatial size of the input.
+
+Flatten
+The Flatten() layer takes the multi-dimensional output from previous layers (like a 2D feature map from a Conv2D layer or a 3D tensor after pooling) and converts it into a 1D array (vector).
+
+Dense(10, activation='softmax')
+Dense: A dense (fully connected) layer means that each neuron in this layer is connected to every neuron in the previous layer. 
+This is the most commonly used layer in neural networks for making predictions after feature extraction (usually done by convolutional layers in CNNs)
+
+
+
+activation='relu':
+Helps to introduce the Non-linear activation function applied after convolution (helps model learn complex patterns).
+Range of ReLU: 
+[0,+∞)
+
+The softmax activation function is used for multi-class classification problems. It converts the raw outputs (logits) from the dense layer into probabilities that sum to 1, 
+where each probability represents the likelihood that the input belongs to each class.
+

@@ -29,6 +29,10 @@ Helps to introduce the Non-linear activation function applied after convolution 
 Range of ReLU: 
 [0,+∞)
 
+Softmax
 The softmax activation function is used for multi-class classification problems. It converts the raw outputs (logits) from the dense layer into probabilities that sum to 1, 
 where each probability represents the likelihood that the input belongs to each class.
+
+Adam
+The Adam optimizer is an adaptive learning rate optimization algorithm that adjusts the learning rate for each parameter individually based on its past gradients.
 

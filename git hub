@@ -4,3 +4,16 @@ Create a new floder , open it with VS code
 Clone Command
 git clone (repo_link)
 
+Virtual Environment
+python -m venv venv
+.\venv\Scripts\activate
+
+Create the requirement txt file 
+pip freeze > requirements.txt
+
+Share environment set up to git hub
+Cerate a .gitignore file
+
+Initializes a new Git repository in your current project folder
+git init
+

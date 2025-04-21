@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score
 # Load the Iris dataset
 iris = load_iris()
 X = iris.data
-y = iris.target
+y = iris.target    
 # Split into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -187,3 +187,97 @@ git add .
 git commit -m "Added EDA notebook and report for Titanic dataset"
 git remote add origin https://github.com/yourusername/your-repo-name.git
 git push -u origin master
+
+6.	Visualizing Model Performance
+
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    confusion_matrix, ConfusionMatrixDisplay,
+    precision_recall_curve, average_precision_score, PrecisionRecallDisplay,
+    roc_curve, auc, RocCurveDisplay
+)
+
+# 1. Load dataset
+data = load_breast_cancer()
+X, y = data.data, data.target
+
+# 2. Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 3. Train models
+lr_model = LogisticRegression(max_iter=10000)
+rf_model = RandomForestClassifier()
+
+lr_model.fit(X_train, y_train)
+rf_model.fit(X_train, y_train)
+
+# 4. Create results directory
+os.makedirs("results", exist_ok=True)
+
+# 5. Confusion Matrices
+for model, name in zip([lr_model, rf_model], ['LogisticRegression', 'RandomForest']):
+    y_pred = model.predict(X_test)
+    cm = confusion_matrix(y_test, y_pred)
+    print(f"\n{name} - Confusion Matrix:")
+    print(cm)
+
+# 6. Precision-Recall Curves & Histogram of probabilities
+for model, name in zip([lr_model, rf_model], ['LogisticRegression', 'RandomForest']):
+    y_scores = model.predict_proba(X_test)[:, 1]
+    precision, recall, _ = precision_recall_curve(y_test, y_scores)
+    avg_precision = average_precision_score(y_test, y_scores)
+
+    # PR Curve
+    disp = PrecisionRecallDisplay(precision=precision, recall=recall, average_precision=avg_precision)
+    disp.plot()
+    plt.title(f"{name} - Precision-Recall Curve")
+    plt.show()
+
+    # Histogram of predicted probabilities
+    plt.hist(y_scores, bins=20, edgecolor='black')
+    plt.title(f"{name} - Predicted Probabilities")
+    plt.xlabel("Probability of Positive Class")
+    plt.ylabel("Frequency")
+    plt.show()
+
+# 7. ROC Curve
+plt.figure()
+for model, name in zip([lr_model, rf_model], ['LogisticRegression', 'RandomForest']):
+    y_scores = model.predict_proba(X_test)[:, 1]
+    fpr, tpr, _ = roc_curve(y_test, y_scores)
+    roc_auc = auc(fpr, tpr)
+    RocCurveDisplay(fpr=fpr, tpr=tpr, roc_auc=roc_auc, estimator_name=name).plot()
+
+plt.title("ROC Curve Comparison")
+plt.savefig("results/roc_curve_comparison.png")
+plt.close()
+
+# 8. Feature Importance (only for Random Forest)
+importances = rf_model.feature_importances_
+indices = np.argsort(importances)[-10:]  # Top 10 features
+plt.figure(figsize=(10, 6))
+plt.barh(range(len(indices)), importances[indices], align='center')
+plt.yticks(range(len(indices)), [data.feature_names[i] for i in indices])
+plt.title("Random Forest - Top 10 Feature Importances")
+plt.xlabel("Relative Importance")
+plt.tight_layout()
+plt.savefig("results/RandomForest_feature_importance.png")
+plt.close()
+
+# 9. Performance Comparison
+lr_ap = average_precision_score(y_test, lr_model.predict_proba(X_test)[:, 1])
+rf_ap = average_precision_score(y_test, rf_model.predict_proba(X_test)[:, 1])
+
+print(f"Average Precision - Logistic Regression: {lr_ap:.4f}")
+print(f"Average Precision - Random Forest: {rf_ap:.4f}")
+
+if lr_ap > rf_ap:
+    print("Logistic Regression performs better based on Average Precision.")
+else:
+    print("Random Forest performs better based on Average Precision.")

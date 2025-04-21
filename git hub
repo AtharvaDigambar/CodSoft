@@ -8,12 +8,31 @@ Virtual Environment
 python -m venv venv
 .\venv\Scripts\activate
 
-Create the requirement txt file 
+Create the requirement txt file (Use at last after writing the complete code)
 pip freeze > requirements.txt
 
 Share environment set up to git hub
 Cerate a .gitignore file
 
+Example work flow 
+git init                      # Start Git repo
+git add .                     # Stage everything
+git commit -m "Initial commit"  # Save a snapshot of staged files
+
+
 Initializes a new Git repository in your current project folder
 git init
+
+Adds all files and folders in your current directory
+git add .
+git add .  # Adds everything in the current directory
+git add file.py # Adds only file.py
+git add folder/ # Adds all files inside folder/
+git add -A # Adds all changes (new, modified, deleted)
+
+The git commit command saves a snapshot of your project in its current state
+git commit -m "Your message here"
+
+Push Your Code to GitHub
+git push -u origin main
 
